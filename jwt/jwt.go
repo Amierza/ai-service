@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/Amierza/worker-service/dto"
+	"github.com/Amierza/ai-service/dto"
 	"github.com/golang-jwt/jwt/v5"
 )
 

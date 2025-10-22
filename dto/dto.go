@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/Amierza/worker-service/entity"
+	"github.com/Amierza/ai-service/entity"
 	"github.com/google/uuid"
 )
 
@@ -17,12 +17,12 @@ const (
 	MESSAGE_FAILED_TOKEN_NOT_VALID     = "failed token not valid"
 	MESSAGE_FAILED_TOKEN_DENIED_ACCESS = "failed token denied access"
 
-	// Consume
-	FAILED_CONSUME_SUMMARY_TASKS = "failed consume summary tasks"
+	// Generate Summary with LLM GPT
+	FAILED_GENERATE_SUMMARY_WITH_GPT_LLM = "failed generate summary with gpt llm"
 
 	// ====================================== Success ======================================
-	// Consume
-	SUCCESS_CONSUME_SUMMARY_TASKS = "success consume summary tasks"
+	// Generate Summary with LLM GPT
+	SUCCESS_GENERATE_SUMMARY_WITH_GPT_LLM = "success generate summary with gpt llm"
 )
 
 var (

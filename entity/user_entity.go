@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"github.com/Amierza/worker-service/helper"
+	"github.com/Amierza/ai-service/helper"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )

@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/Amierza/worker-service/dto"
+	"github.com/Amierza/ai-service/dto"
 )
 
 func mapErrorToStatus(err error) int {

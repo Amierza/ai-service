@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/Amierza/worker-service/dto"
-	"github.com/Amierza/worker-service/jwt"
-	"github.com/Amierza/worker-service/response"
+	"github.com/Amierza/ai-service/dto"
+	"github.com/Amierza/ai-service/jwt"
+	"github.com/Amierza/ai-service/response"
 	"github.com/gin-gonic/gin"
 )
 

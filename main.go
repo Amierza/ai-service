@@ -1,30 +1,25 @@
 package main
 
 import (
-	"context"
 	"log"
 	"os"
 	"time"
 
-	"github.com/Amierza/worker-service/config/database"
-	"github.com/Amierza/worker-service/config/rabbitmq"
-	"github.com/Amierza/worker-service/jwt"
-	"github.com/Amierza/worker-service/logger"
-	"github.com/Amierza/worker-service/middleware"
-	"github.com/Amierza/worker-service/repository"
-	"github.com/Amierza/worker-service/service"
+	"github.com/Amierza/ai-service/config/database"
+	"github.com/Amierza/ai-service/handler"
+	"github.com/Amierza/ai-service/jwt"
+	"github.com/Amierza/ai-service/logger"
+	"github.com/Amierza/ai-service/middleware"
+	"github.com/Amierza/ai-service/repository"
+	"github.com/Amierza/ai-service/routes"
+	"github.com/Amierza/ai-service/service"
 	"github.com/gin-gonic/gin"
-	"go.uber.org/zap"
 )
 
 func main() {
 	// setup potgres connection
 	db := database.SetUpPostgreSQLConnection()
 	defer database.ClosePostgreSQLConnection(db)
-
-	// setup rabbitmq connection
-	rabbitConn := rabbitmq.SetUpRabbitMQConnection()
-	defer rabbitmq.CloseRabbitMQConnection(rabbitConn)
 
 	// Zap logger
 	zapLogger, err := logger.New(true) // true = dev, false = prod
@@ -37,25 +32,16 @@ func main() {
 		// JWT
 		jwt = jwt.NewJWT()
 
-		// Consumer
-		consumerRepo    = repository.NewConsumerRepository(db)
-		consumerService = service.NewConsumerService(consumerRepo, zapLogger, rabbitConn, jwt)
-		// consumerHandler = handler.NewConsumerHandler(consumerService)
+		// Summary Task With LLM GPT
+		summaryRepo    = repository.NewSummaryRepository(db)
+		summaryService = service.NewSummaryService(summaryRepo, zapLogger, jwt)
+		summaryHandler = handler.NewSummaryHandler(summaryService)
 	)
 
-	// 🧠 Jalankan consumer di background (langsung listen)
-	go func() {
-		zapLogger.Info("🚀 Starting RabbitMQ consumer listener...")
-		if err := consumerService.ConsumeSummaryTasks(context.Background()); err != nil {
-			zapLogger.Fatal("failed to start consumer", zap.Error(err))
-		}
-	}()
-
-	// Optional: Gin web server (bisa tetap dipakai untuk health check)
 	server := gin.Default()
 	server.Use(middleware.CORSMiddleware())
 
-	// routes.Consumer(server, consumerHandler, jwt) // opsional
+	routes.Summary(server, summaryHandler, jwt)
 
 	server.Static("/uploads", "./uploads")
 

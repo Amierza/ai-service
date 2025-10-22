@@ -1,4 +1,4 @@
-module github.com/Amierza/worker-service
+module github.com/Amierza/ai-service
 
 go 1.23.2
 

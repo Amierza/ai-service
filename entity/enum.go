@@ -1,6 +1,6 @@
 package entity
 
-import "github.com/Amierza/worker-service/constants"
+import "github.com/Amierza/ai-service/constants"
 
 type (
 	Role          string
