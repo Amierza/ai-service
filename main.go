@@ -6,12 +6,10 @@ import (
 	"time"
 
 	"github.com/Amierza/ai-service/config/database"
-	"github.com/Amierza/ai-service/handler"
 	"github.com/Amierza/ai-service/jwt"
 	"github.com/Amierza/ai-service/logger"
 	"github.com/Amierza/ai-service/middleware"
 	"github.com/Amierza/ai-service/repository"
-	"github.com/Amierza/ai-service/routes"
 	"github.com/Amierza/ai-service/service"
 	"github.com/gin-gonic/gin"
 )
@@ -28,20 +26,27 @@ func main() {
 	}
 	defer zapLogger.Sync() // flush buffer
 
+	// baca API Key dari environment
+	openaiKey := os.Getenv("OPENAI_API_KEY")
+	if openaiKey == "" {
+		log.Fatal("missing OPENAI_API_KEY environment variable")
+	}
+
 	var (
 		// JWT
 		jwt = jwt.NewJWT()
 
 		// Summary Task With LLM GPT
 		summaryRepo    = repository.NewSummaryRepository(db)
-		summaryService = service.NewSummaryService(summaryRepo, zapLogger, jwt)
-		summaryHandler = handler.NewSummaryHandler(summaryService)
+		summaryService = service.NewSummaryService(summaryRepo, zapLogger, jwt, openaiKey)
+		_              = summaryService
+		// summaryHandler = handler.NewSummaryHandler(summaryService)
 	)
 
 	server := gin.Default()
 	server.Use(middleware.CORSMiddleware())
 
-	routes.Summary(server, summaryHandler, jwt)
+	// routes.Summary(server, summaryHandler, jwt)
 
 	server.Static("/uploads", "./uploads")
 

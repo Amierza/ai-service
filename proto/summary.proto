@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package summary;
+
+option go_package = "./proto";
+
+// ==================== BASIC STRUCT ====================
+
+message CustomUser {
+  string id = 1;
+  string name = 2;
+  string identifier = 3;
+  string role = 4;
+}
+
+message Faculty {
+  string id = 1;
+  string name = 2;
+}
+
+message StudyProgram {
+  string id = 1;
+  string name = 2;
+  string degree = 3;
+  Faculty faculty = 4;
+}
+
+message Student {
+  string id = 1;
+  string nim = 2;
+  string name = 3;
+  string email = 4;
+  StudyProgram study_program = 5;
+}
+
+message Lecturer {
+  string id = 1;
+  string nip = 2;
+  string name = 3;
+  string email = 4;
+  int32 total_student = 5;
+  StudyProgram study_program = 6;
+}
+
+message ThesisInfo {
+  string title = 1;
+  string description = 2;
+  string progress = 3;
+}
+
+message MessageSummary {
+  string id = 1;
+  bool is_text = 2;
+  string text = 3;
+  string file_url = 4;
+  string file_type = 5;
+  CustomUser sender = 6;
+  string parent_message_id = 7;
+  string timestamp = 8;
+}
+
+// ==================== MAIN PAYLOAD ====================
+
+message TaskSummary {
+  string session_id = 1;
+  string session_status = 2;
+  string started_at = 3;
+  string ended_at = 4;
+  string created_at = 5;
+
+  CustomUser owner = 6;
+  Student student = 7;
+  repeated Lecturer supervisors = 8;
+
+  ThesisInfo thesis_info = 9;
+  repeated MessageSummary messages = 10;
+}
+
+// ==================== SERVICE DEFINITIONS ====================
+
+message SummaryRequest {
+  TaskSummary task = 1;
+}
+
+message SummaryResponse {
+  string session_id = 1;
+  string summary = 2;
+  string status = 3;
+}
+
+service SummaryService {
+  rpc GenerateSummary (SummaryRequest) returns (SummaryResponse);
+}

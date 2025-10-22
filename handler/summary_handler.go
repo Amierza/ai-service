@@ -1,20 +1,18 @@
 package handler
 
 import (
-	"net/http"
-
-	"github.com/Amierza/ai-service/dto"
-	"github.com/Amierza/ai-service/response"
+	pb "github.com/Amierza/ai-service/proto"
 	"github.com/Amierza/ai-service/service"
 	"github.com/gin-gonic/gin"
 )
 
 type (
 	ISummaryYHandler interface {
-		GenerateSummary(ctx *gin.Context)
+		GenerateSummary(ctx *gin.Context, req *pb.SummaryRequest) (*pb.SummaryResponse, error)
 	}
 
 	summaryHandler struct {
+		pb.UnimplementedSummaryServiceServer
 		summaryService service.ISummaryService
 	}
 )
@@ -25,15 +23,15 @@ func NewSummaryHandler(summaryService service.ISummaryService) *summaryHandler {
 	}
 }
 
-func (sh *summaryHandler) GenerateSummary(ctx *gin.Context) {
-	err := sh.summaryService.GenerateSummary(ctx)
+func (sh *summaryHandler) GenerateSummary(ctx *gin.Context, req *pb.SummaryRequest) (*pb.SummaryResponse, error) {
+	result, err := sh.summaryService.GenerateSummary(ctx, req)
 	if err != nil {
-		status := mapErrorToStatus(err)
-		res := response.BuildResponseFailed(dto.FAILED_GENERATE_SUMMARY_WITH_GPT_LLM, err.Error(), nil)
-		ctx.AbortWithStatusJSON(status, res)
-		return
+		return nil, err
 	}
 
-	res := response.BuildResponseSuccess(dto.SUCCESS_GENERATE_SUMMARY_WITH_GPT_LLM, nil)
-	ctx.JSON(http.StatusOK, res)
+	return &pb.SummaryResponse{
+		SessionId: req.Task.SessionId,
+		Summary:   result,
+		Status:    "success",
+	}, nil
 }
