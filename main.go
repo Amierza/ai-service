@@ -68,13 +68,13 @@ func main() {
 	}
 
 	// setup gRPC client ke AI Service
-	grpcTarget := os.Getenv("AI_SERVICE_GRPC_ADDR")
-	if grpcTarget == "" {
-		grpcTarget = "localhost:50051" // default fallback
+	grpcPortTarget := os.Getenv("GRPC_PORT")
+	if grpcPortTarget == "" {
+		grpcPortTarget = "50051" // default fallback
 	}
 
 	go func() {
-		lis, err := net.Listen("tcp", grpcTarget)
+		lis, err := net.Listen("tcp", grpcPortTarget)
 		if err != nil {
 			log.Fatalf("failed to listen: %v", err)
 		}
