@@ -74,7 +74,7 @@ func main() {
 	}
 
 	go func() {
-		lis, err := net.Listen("tcp", grpcPortTarget)
+		lis, err := net.Listen("tcp", ":"+grpcPortTarget)
 		if err != nil {
 			log.Fatalf("failed to listen: %v", err)
 		}
