@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net"
 	"os"
 	"time"
 
@@ -9,9 +10,11 @@ import (
 	"github.com/Amierza/ai-service/jwt"
 	"github.com/Amierza/ai-service/logger"
 	"github.com/Amierza/ai-service/middleware"
+	pb "github.com/Amierza/ai-service/proto"
 	"github.com/Amierza/ai-service/repository"
 	"github.com/Amierza/ai-service/service"
 	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc"
 )
 
 func main() {
@@ -63,6 +66,21 @@ func main() {
 	} else {
 		serve = ":" + port
 	}
+
+	go func() {
+		lis, err := net.Listen("tcp", ":50051")
+		if err != nil {
+			log.Fatalf("failed to listen: %v", err)
+		}
+
+		grpcServer := grpc.NewServer()
+		pb.RegisterSummaryServiceServer(grpcServer, service.NewGRPCSummaryServer(summaryService, zapLogger))
+
+		zapLogger.Info("🚀 gRPC server running on port 50051...")
+		if err := grpcServer.Serve(lis); err != nil {
+			log.Fatalf("failed to serve gRPC: %v", err)
+		}
+	}()
 
 	if err := server.Run(serve); err != nil {
 		log.Fatalf("error running server: %v", err)

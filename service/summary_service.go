@@ -118,6 +118,12 @@ Tuliskan hasil ringkasan dalam bahasa Indonesia yang formal.
 		return "", err
 	}
 
+	err = ss.summaryRepo.UpdateStatusSessionFinished(ctx, nil, req.Task.SessionId)
+	if err != nil {
+		ss.logger.Error("failed update session status to finished", zap.Error(err))
+		return "", err
+	}
+
 	ss.logger.Info("Summary generated successfully", zap.String("session_id", task.SessionId))
 	return summary, nil
 }
