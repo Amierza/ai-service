@@ -71,8 +71,12 @@ func (ss *summaryService) GenerateSummary(ctx context.Context, req *pb.SummaryRe
 
 	// 3️⃣ Buat prompt untuk GPT
 	prompt := fmt.Sprintf(`
-Buatlah ringkasan akademik dari percakapan bimbingan berikut ini.
-Fokus pada inti pembahasan, arahan dosen, dan kemajuan penelitian mahasiswa.
+Buatlah ringkasan akademik dari percakapan bimbingan berikut ini dalam bentuk poin-poin yang ringkas dan jelas.
+
+Fokuskan pada hal-hal berikut:
+1. Inti pembahasan utama.
+2. Arahan atau masukan dari dosen.
+3. Tindak lanjut atau progres mahasiswa.
 
 Judul Tugas Akhir: %s
 Deskripsi: %s
@@ -80,7 +84,7 @@ Deskripsi: %s
 Percakapan:
 %s
 
-Tuliskan hasil ringkasan dalam bahasa Indonesia yang formal.
+Tuliskan hasil ringkasan dalam Bahasa Indonesia yang formal, dalam format poin-poin (gunakan tanda '-' atau '•' di awal setiap poin).
 `, task.ThesisInfo.Title, task.ThesisInfo.Description, joinedMessages)
 
 	// 4️⃣ Panggil API OpenAI
